@@ -803,6 +803,15 @@ class Or(BinExpr):
         return self.left.as_const(eval_ctx) or self.right.as_const(eval_ctx)
 
 
+class Implies(BinExpr):
+    """Short circuited IMPLIES."""
+    operator = 'implies'
+
+    def as_const(self, eval_ctx=None):
+        eval_ctx = get_eval_context(self, eval_ctx)
+        return not self.left.as_const(eval_ctx) or self.right.as_const(eval_ctx)
+
+
 class Not(UnaryExpr):
     """Negate the expression."""
     operator = 'not'

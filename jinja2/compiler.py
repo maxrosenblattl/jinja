@@ -1488,6 +1488,20 @@ class CodeGenerator(NodeVisitor):
     visit_Not = uaop('not ', interceptable=False)
     del binop, uaop
 
+    def visit_Implies(self, node, frame):
+        if self.environment.sandboxed and \
+           'implies' in self.environment.intercepted_binops:
+            self.write('environment.call_binop(context, \'implies\', ')
+            self.visit(node.left, frame)
+            self.write(', ')
+            self.visit(node.right, frame)
+        else:
+            self.write('(not ')
+            self.visit(node.left, frame)
+            self.write(' or ')
+            self.visit(node.right, frame)
+        self.write(')')
+
     @optimizeconst
     def visit_Concat(self, node, frame):
         if frame.eval_ctx.volatile:

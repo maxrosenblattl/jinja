@@ -442,10 +442,19 @@ class Parser(object):
 
     def parse_or(self):
         lineno = self.stream.current.lineno
-        left = self.parse_and()
+        left = self.parse_implies()
         while self.stream.skip_if('name:or'):
-            right = self.parse_and()
+            right = self.parse_implies()
             left = nodes.Or(left, right, lineno=lineno)
+            lineno = self.stream.current.lineno
+        return left
+
+    def parse_implies(self):
+        lineno = self.stream.current.lineno
+        left = self.parse_and()
+        while self.stream.skip_if('name:implies'):
+            right = self.parse_and()
+            left = nodes.Implies(left, right, lineno=lineno)
             lineno = self.stream.current.lineno
         return left
 
