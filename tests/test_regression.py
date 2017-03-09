@@ -76,6 +76,27 @@ class TestCorner(object):
         ''')
         assert t.render(wrapper=23) == '[1][2][3][4]23'
 
+    def test_nested_xml_entities(self, env):
+        t = env.from_string('''
+        {{- "&quot;" -}}
+        ''')
+        assert t.render() == '&quot;'
+
+        t = env.from_string('''
+        {{- &quot;\\&quot;&quot; -}}
+        ''')
+        assert t.render() == '"'
+
+        t = env.from_string('''
+        {{- '&apos;' -}}
+        ''')
+        assert t.render() == "&apos;"
+
+        t = env.from_string('''
+        {{- &apos;\\&apos;&apos; -}}
+        ''')
+        assert t.render() == "'"
+
 
 @pytest.mark.regression
 class TestBug(object):
